@@ -7,7 +7,6 @@ from logger import Logger
 
 # WebSocket 配置
 WS_CONFIG = {
-    'timeout': 10,
     'reconnect_delay': 3,
     'max_retries': 5
 }
@@ -42,7 +41,7 @@ class WebSocketManager:
                 # Ensure we have a connection
                 if not self.connection or not self.running:
                     if not await self.connect():
-                        self.logger.error("Failed to reconnect - retrying in {self.reconnect_delay}s")
+                        self.logger.error(f"Failed to reconnect - retrying in {self.reconnect_delay}s")
                         await asyncio.sleep(self.reconnect_delay)
                         continue
                 
@@ -84,8 +83,7 @@ class WebSocketManager:
         try:
             self.logger.info(f"Attempting to connect to WebSocket server at {self.url}")
             self.connection = await websockets.connect(
-                self.url,
-                timeout=WS_CONFIG['timeout']
+                self.url
             )
             self.logger.success("WebSocket connection established successfully")
             self.current_retry = 0
