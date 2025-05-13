@@ -4,6 +4,7 @@ from logger import Logger
 from manager import BaseManager
 from fastapi import HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
+from fastapi import BackgroundTasks
 
 class RequestManager(BaseManager):
     def __init__(self, ws_manager):
@@ -76,7 +77,7 @@ class RequestManager(BaseManager):
             self.cleanup_request(request_id, background_tasks)
             raise
 
-    async def handle_request(self, request_id: str, request: dict) -> dict:
+    async def handle_request(self, request_id: str, request: dict, background_tasks: BackgroundTasks) -> dict:
         """Handle non-stream request with cleanup"""
         try:
             return await self.process_request(request_id, request)
