@@ -102,7 +102,7 @@ class StreamManager(BaseManager):
                         }
                         yield f"data: {json.dumps(chunk)}\n\n"
                 except asyncio.TimeoutError:
-                    self.logger.warning(f"Stream timeout for request {request_id}")
+                    self.logger.warn(f"Stream timeout for request {request_id}")
                     yield f"data: [TIMEOUT]\n\n"
                     break
                 except Exception as e:
