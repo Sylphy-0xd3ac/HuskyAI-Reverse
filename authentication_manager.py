@@ -14,7 +14,11 @@ class AuthenticationManager:
 
     async def authenticate_wallet(self, wallet_address: str):
         try:
-            self.logger.info(f"Authenticating wallet: {wallet_address}")
+            masked_address = f"{wallet_address[:6]}...{wallet_address[-4:]}"
+            self.logger.info(f"Authenticating wallet: {masked_address}")
+            if wallet_address in self.authenticated_addresses:
+                self.logger.info(f"Already authenticated wallet: {masked_address}")
+                return True
             # 发送认证请求
             auth_request = {
                 "method": "walletAuth/authenticateWallet",
@@ -34,13 +38,13 @@ class AuthenticationManager:
                 response = await asyncio.wait_for(response_queue.get(), timeout=self.auth_timeout)
                 if response and response.get("code") == 200:
                     self.authenticated_addresses.append(wallet_address)
-                    self.logger.success(f"Wallet authenticated successfully: {wallet_address}")
+                    self.logger.success(f"Wallet authenticated successfully: {masked_address}")
                     return True
                 else:
                     self.logger.error(f"Wallet authentication failed: {response}")
                     return False
             except asyncio.TimeoutError:
-                self.logger.error(f"Authentication timeout for wallet: {wallet_address}")
+                self.logger.error(f"Authentication timeout for wallet: {masked_address}")
                 return False
             finally:
                 # Always unregister the listener
